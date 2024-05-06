@@ -1,0 +1,9 @@
+n = int (input("enter a number ="))
+while(n!= -2):
+    if(n%2==0):
+       print("it is even number")
+    else:
+        print("it is odd number")
+    n= int(input("enter a new number="))
+print("end of program")
+     
