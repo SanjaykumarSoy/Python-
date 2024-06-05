@@ -1,0 +1,110 @@
+from tkinter import Canvas, Tk, messagebox, font, Label, Entry, Button
+
+class Customer:
+    def __init__(self, name, phone):
+        self.name = name
+        self.phone = phone
+        self.tokens = []
+
+    def add_token(self, token):
+        self.tokens.append(token)
+
+    def __str__(self):
+        return f'Customer: {self.name}, Phone: {self.phone}, Tokens: {self.tokens}'
+
+class SalesSystem:
+    def __init__(self):
+        self.customers = {}
+        self.token_counter = 1
+
+    def register_customer(self, name, phone):
+        if phone not in self.customers:
+            self.customers[phone] = Customer(name, phone)
+            messagebox.showinfo("Registration", f'Customer {name} registered successfully.')
+        else:
+            messagebox.showwarning("Registration", f'Customer with phone {phone} already exists.')
+
+    def generate_token(self):
+        token = f"TOKEN-{self.token_counter}"
+        self.token_counter += 1
+        return token
+
+    def new_sale(self, phone):
+        if phone in self.customers:
+            token = self.generate_token()
+            self.customers[phone].add_token(token)
+            messagebox.showinfo("Sale", f'Sale recorded. Token issued: {token}')
+            self.notify_customer(phone)
+        else:
+            messagebox.showerror("Sale", f'No customer with phone {phone} found.')
+
+    def notify_customer(self, phone):
+        if phone in self.customers:
+            messagebox.showinfo("Notification", f'Thank you for your purchase, {self.customers[phone].name}! Your token is: {self.customers[phone].tokens[-1]}')
+        else:
+            messagebox.showerror("Notification", f'No customer with phone {phone} found.')
+
+    def get_customer_info(self, phone):
+        if phone in self.customers:
+            return str(self.customers[phone])
+        else:
+            return f'No customer with phone {phone} found.'
+
+def register_customer_gui():
+    name = name_entry.get()
+    phone = phone_entry.get()
+    if name and phone:
+        system.register_customer(name, phone)
+    else:
+        messagebox.showwarning("Input Error", "Please enter both name and phone number.")
+
+def new_sale_gui():
+    phone = sale_phone_entry.get()
+    if phone:
+        system.new_sale(phone)
+    else:
+        messagebox.showwarning("Input Error", "Please enter a phone number.")
+
+def get_customer_info_gui():
+    phone = info_phone_entry.get()
+    if phone:
+        info = system.get_customer_info(phone)
+        messagebox.showinfo("Customer Info", info)
+    else:
+        messagebox.showwarning("Input Error", "Please enter a phone number.")
+
+if __name__ == "__main__":
+    system = SalesSystem()
+
+    # Initialize Tkinter
+    root = Tk()
+    root.title("Vegetable Sales System")
+
+    # Font configuration
+    app_font = font.Font(size=12)
+
+    # Customer Registration
+    Label(root, text="Register Customer", font=app_font).grid(row=0, column=0, columnspan=2, pady=10)
+    Label(root, text="Name:", font=app_font).grid(row=1, column=0, sticky='e')
+    name_entry = Entry(root, font=app_font)
+    name_entry.grid(row=1, column=1, padx=10, pady=5)
+    Label(root, text="Phone:", font=app_font).grid(row=2, column=0, sticky='e')
+    phone_entry = Entry(root, font=app_font)
+    phone_entry.grid(row=2, column=1, padx=10, pady=5)
+    Button(root, text="Register", font=app_font, command=register_customer_gui).grid(row=3, column=0, columnspan=2, pady=10)
+
+    # Record Sale
+    Label(root, text="Record Sale", font=app_font).grid(row=4, column=0, columnspan=2, pady=10)
+    Label(root, text="Phone:", font=app_font).grid(row=5, column=0, sticky='e')
+    sale_phone_entry = Entry(root, font=app_font)
+    sale_phone_entry.grid(row=5, column=1, padx=10, pady=5)
+    Button(root, text="New Sale", font=app_font, command=new_sale_gui).grid(row=6, column=0, columnspan=2, pady=10)
+
+    # Get Customer Info
+    Label(root, text="Get Customer Info", font=app_font).grid(row=7, column=0, columnspan=2, pady=10)
+    Label(root, text="Phone:", font=app_font).grid(row=8, column=0, sticky='e')
+    info_phone_entry = Entry(root, font=app_font)
+    info_phone_entry.grid(row=8, column=1, padx=10, pady=5)
+    Button(root, text="Get Info", font=app_font, command=get_customer_info_gui).grid(row=9, column=0, columnspan=2, pady=10)
+
+    root.mainloop()
